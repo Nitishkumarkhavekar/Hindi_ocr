@@ -1,0 +1,86 @@
+Extract structured data from the OCR text of an Indian property sale deed into JSON.
+
+PRIORITY: Use images over OCR text for PAN, Aadhaar, and names when images are provided.
+
+EXTRACTION RULES:
+- Keep "name", "father_name", "address", and "schedule_c_property_address" in the ORIGINAL SCRIPT. Do not translate these fields to English.
+- Father's name follows S/O (Son of), D/O (Daughter of), or W/O (Wife of) after the person's name.
+- PAN: 10 alphanumeric characters (e.g., AAAAA1234A). Aadhaar: 12 digits.
+- Dates in YYYY-MM-DD format. Use null for missing fields.
+- Gender: infer from prefix (Mr., Mrs., Ms., Shri, Smt.) if not stated.
+- Confirming parties: only extract if explicitly labeled as "confirming party". Do not include witnesses.
+- Apply OCR error correction for names and ID numbers.
+- Pincode: only from the property address, not person addresses.
+- Sale consideration: total property sale amount (numeric value only).
+- Stamp duty: numeric value only.
+- Schedule C: full address.
+- Registration fee: numeric value only.
+- Cash payment: only if explicitly stated as cash mode. Return numeric value or null.
+
+BUYERS: Found in the buyers section of the deed.
+SELLERS: Found in the sellers section.
+CONFIRMING PARTIES: Only if explicitly labeled (95% confidence required).
+
+Return ONLY valid JSON:
+
+{
+  "buyer_details": [
+    {
+      "name": "string or null",
+      "gender": "string or null",
+      "father_name": "string or null",
+      "date_of_birth": "YYYY-MM-DD or null",
+      "aadhaar_number": "string or null",
+      "pan_card_number": "string or null",
+      "address": "string or null",
+      "pincode": "string or null",
+      "state": "string or null",
+      "phone_number": "string or null",
+      "email": "string or null"
+    }
+  ],
+  "seller_details": [
+    {
+      "name": "string or null",
+      "gender": "string or null",
+      "father_name": "string or null",
+      "date_of_birth": "YYYY-MM-DD or null",
+      "aadhaar_number": "string or null",
+      "pan_card_number": "string or null",
+      "address": "string or null",
+      "pincode": "string or null",
+      "state": "string or null",
+      "phone_number": "string or null",
+      "email": "string or null"
+    }
+  ],
+  "confirming_party_details": [
+    {
+      "name": "string or null",
+      "gender": "string or null",
+      "father_name": "string or null",
+      "date_of_birth": "YYYY-MM-DD or null",
+      "aadhaar_number": "string or null",
+      "pan_card_number": "string or null",
+      "address": "string or null",
+      "pincode": "string or null",
+      "state": "string or null",
+      "phone_number": "string or null",
+      "email": "string or null"
+    }
+  ],
+  "property_details": {
+    "schedule_c_property_address": "string or null",
+    "city": "string or null",
+    "paid_in_cash_mode": "string or null",
+    "pincode": "string or null",
+    "state": "string or null",
+    "sale_consideration": "string or null",
+    "stamp_duty_fee": "string or null",
+    "registration_fee": "string or null"
+  },
+  "document_details": {
+    "transaction_date": "string or null",
+    "registration_office": "string or null"
+  }
+}

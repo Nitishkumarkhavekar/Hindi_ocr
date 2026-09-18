@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hindi-ocr"
+version = "0.2.0"
+description = "Hindi-OCR: standalone Devanagari document OCR (ONNX Runtime) producing Gemma extraction records"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["onnxruntime-gpu>=1.17", "numpy", "opencv-python-headless", "pyclipper", "shapely", "pyyaml", "pypdfium2>=4.0"]
+
+[project.optional-dependencies]
+cpu = ["onnxruntime"]
+test = ["pytest", "pillow"]
+
+[project.scripts]
+hindi-ocr = "hindi_ocr.cli:main"
+hindi-ocr-eval = "hindi_ocr.evaluate:main"
+
+[tool.setuptools]
+packages = ["hindi_ocr"]
+
+[tool.setuptools.package-data]
+hindi_ocr = ["gemma_prompt.txt", "gemma_output_template.json"]

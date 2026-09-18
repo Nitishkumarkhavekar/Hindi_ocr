@@ -1,0 +1,47 @@
+{
+  "buyer_details": [
+    {
+      "name": null,
+      "gender": null,
+      "father_name": null,
+      "date_of_birth": null,
+      "aadhaar_number": null,
+      "pan_card_number": null,
+      "address": null,
+      "pincode": null,
+      "state": null,
+      "phone_number": null,
+      "email": null
+    }
+  ],
+  "seller_details": [
+    {
+      "name": null,
+      "gender": null,
+      "father_name": null,
+      "date_of_birth": null,
+      "aadhaar_number": null,
+      "pan_card_number": null,
+      "address": null,
+      "pincode": null,
+      "state": null,
+      "phone_number": null,
+      "email": null
+    }
+  ],
+  "confirming_party_details": [],
+  "property_details": {
+    "schedule_c_property_address": null,
+    "city": null,
+    "paid_in_cash_mode": null,
+    "pincode": null,
+    "state": null,
+    "sale_consideration": null,
+    "stamp_duty_fee": null,
+    "registration_fee": null
+  },
+  "document_details": {
+    "transaction_date": null,
+    "registration_office": null
+  }
+}

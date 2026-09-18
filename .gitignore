@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+build/
+dist/
+# outputs and evaluation data never belong in the repo (deed content)
+hindi_ocr_out/
+eval/
+*.log

@@ -1,0 +1,53 @@
+# Hindi-OCR configuration. Paths are relative to this file's directory.
+models:
+  det: models/det/inference.onnx          # PP-OCRv5 mobile text detector (DB), script-agnostic
+  rec: models/rec/inference.onnx          # recognizer backend model (see recognizer.backend)
+  charset: models/rec/charset.json        # recognizer character list (CTC: blank at 0, then charset, then space)
+
+provider:
+  policy: auto            # auto = cuda -> cpu; 'cuda' or 'cpu' force one. HINDI_OCR_CPU=1 forces cpu.
+  cuda_mem_limit_gb: 3
+
+detector:
+  limit_side_len: 1920    # longest page side resized to <= this (multiple of 32); deeds at 200 dpi are ~1650x2500
+  thresh: 0.3             # DB binarisation threshold (PaddleOCR default)
+  box_thresh: 0.6         # minimum mean score inside a box
+  unclip_ratio: 1.5       # box expansion (PaddleOCR default; measured best with tight crops on the deed reference set)
+  max_candidates: 1000
+  min_box_size: 5
+
+recognizer:
+  backend: paddle_devanagari   # registered backends: paddle_devanagari (PP-OCRv5, 48 px)  |  future: arjuna_hindi (SVTRv2 KN+HI+EN pack)
+  height: 48
+  batch: 32
+  max_width: 3200
+  drop_score: 0.0         # lines below this confidence are dropped (0 = keep everything, flag instead)
+  crop_pad: 0.0           # vertical context around each line crop, fraction of line height (tight crops read best: +5% pad = -1.5 CER points)
+  crop_pad_x: 0.0         # horizontal context
+  space_gap: 0.22         # recover word spaces the model drops: ink gap >= this * line height between two characters (0 = off)
+  space_gap_latin: 0.30   # same, when both neighbouring characters are Latin letters / digits (wide-kerned IDs need a stricter gap)
+  chunk_ratio: 25         # split lines wider than this * height at word gaps and read the pieces (0 = off)
+  second_pass: null       # e.g. {conf: 0.85, pad: 0.15}: re-read lines below conf with a roomier crop, keep the better read
+  latin:                  # secondary Latin/digit recognizer: lines the Devanagari model reads as pure Latin/digits get a second read, the more confident one wins
+    model: models/rec_en/inference.onnx
+    charset: models/rec_en/charset.json
+    backend: paddle_latin
+    margin: 0.0           # Latin read must beat the Devanagari read's confidence by this much
+    mixed_chunk_ratio: 0  # > 0: also split mixed-script lines at word gaps and re-read Latin pieces (2x slower, no measured gain) — set null to disable the model
+
+postprocess:
+  digit_script_consistent: true    # unify mixed Latin/Devanagari digits inside a digit-only token / line / page to the majority script
+  danda_consistent: true           # ASCII '|' next to Devanagari text -> danda '।'
+
+flags:
+  low_conf: 0.80          # line flagged low_conf below this confidence
+  check: 0.95             # line flagged check between low_conf and this
+
+gemma:
+  join_rows: true         # ocr_text: cells sharing a row (table label + value, side-by-side fields) are one entry joined with ' | '
+
+pdf:
+  dpi: 200
+
+runtime:
+  page_batch: 4
